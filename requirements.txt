@@ -7,6 +7,6 @@ altair==5.4.1
 geopy==2.4.1
 shapely==2.0.4
 folium==0.17.0
-streamlit-folium==0.7.0  # Add this line
-torch==2.3.0  # If you're using PyTorch
-tensorflow==2.16.1  # Only if using TensorFlow models
+streamlit-folium==0.7.0
+matplotlib==3.7.2  # Added for plotting
+seaborn==0.12.2    # Added for advanced visualizations
