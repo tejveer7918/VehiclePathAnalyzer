@@ -1,5 +1,3 @@
-# app.py
-
 # Import necessary libraries
 import streamlit as st
 import pandas as pd
@@ -9,6 +7,8 @@ from geopy.distance import geodesic
 import xml.etree.ElementTree as ET
 from streamlit_folium import folium_static
 import io
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Function to parse KML and POS files to extract GPS data
 def parse_kml_pos(file):
@@ -21,7 +21,6 @@ def parse_kml_pos(file):
         lat, lon, _ = map(float, coord.split(','))
         coords.append((lat, lon))
         
-
     return coords
 
 # Function to parse POS file and extract GPS data
@@ -36,7 +35,6 @@ def parse_pos_file(file):
                 'time': fields[0] + ' ' + fields[1],
                 'latitude': float(fields[2]),
                 'longitude': float(fields[3]),
-                # Add other fields if needed
             })
     return pd.DataFrame(gps_data)
 
@@ -72,6 +70,22 @@ def calculate_speed_and_distance(df):
 
     return df
 
+# Function to plot speed vs time with road type as hue
+def plot_speed_time_road(df):
+    df['time'] = pd.to_datetime(df['time'])  # Convert time to datetime if not already
+    
+    sns.set(style="darkgrid")
+    
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(x='time', y='speed', hue='label', data=df, marker='o')
+    
+    plt.title('Speed vs Time with Road Type')
+    plt.xlabel('Time')
+    plt.ylabel('Speed (m/s)')
+    plt.xticks(rotation=45)
+    
+    st.pyplot(plt)
+
 # Streamlit UI
 st.title("Vehicular Movement Detection")
 
@@ -103,3 +117,7 @@ if kml_file and pos_file:
 
     # Display the map in Streamlit using folium_static
     folium_static(vehicle_map)
+
+    # Plot speed vs time with road type
+    st.subheader('Speed vs Time with Road Type')
+    plot_speed_time_road(combined_data)
